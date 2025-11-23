@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <title>Download Husta App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <script>
     // ---- CONFIG: YOUR LINKS ----
     const ANDROID_URL = "https://play.google.com/store/apps/details?id=com.arazmzerii.husta&hl=en";
     const IOS_URL = "https://apps.apple.com/us/app/husta/id6748364553";
-    // No website for desktop -> leave empty
-    const DESKTOP_URL = "";
+    const DESKTOP_URL = ""; // optional
 
     function redirectUser() {
       const ua = navigator.userAgent || navigator.vendor || window.opera;
@@ -26,46 +26,423 @@
         return;
       }
 
-      // Desktop or unknown -> do nothing (stay on page with buttons)
+      // Desktop or unknown
       if (DESKTOP_URL) {
         window.location.href = DESKTOP_URL;
       }
     }
 
-    // Run redirect as soon as the page loads
     window.onload = redirectUser;
   </script>
+
   <style>
+    :root {
+      --primary: #27AE60;
+      --primary-soft: rgba(39, 174, 96, 0.35);
+      --bg-dark: #050B08;
+      --text-main: #F9FAFB;
+      --text-muted: #CBD5F5;
+      --card-bg: rgba(15, 24, 20, 0.9);
+      --border-soft: rgba(255, 255, 255, 0.08);
+      --shadow-soft: 0 24px 60px rgba(0, 0, 0, 0.55);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      text-align: center;
-      padding: 16px;
+      padding: 24px;
+      background: radial-gradient(circle at top left, #27AE60 0, #050B08 45%, #000 100%);
+      color: var(--text-main);
+      overflow: hidden;
     }
+
+    /* floating background blobs */
+    .bg-orb {
+      position: fixed;
+      border-radius: 999px;
+      filter: blur(40px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-orb.orb-1 {
+      width: 260px;
+      height: 260px;
+      background: var(--primary);
+      top: -80px;
+      left: -40px;
+      animation: floatOrb1 18s ease-in-out infinite alternate;
+    }
+    .bg-orb.orb-2 {
+      width: 220px;
+      height: 220px;
+      background: #16a34a;
+      bottom: -60px;
+      right: -20px;
+      animation: floatOrb2 22s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatOrb1 {
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(40px, 80px, 0) scale(1.1); }
+    }
+    @keyframes floatOrb2 {
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(-40px, -60px, 0) scale(1.1); }
+    }
+
     .card {
-      max-width: 400px;
+      position: relative;
+      z-index: 1;
+      max-width: 420px;
+      width: 100%;
+      padding: 28px 24px 24px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(15, 24, 20, 0.9), rgba(6, 18, 11, 0.96));
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border-soft);
+      backdrop-filter: blur(22px);
+      animation: cardIn 700ms ease-out forwards;
+      transform: translateY(14px);
+      opacity: 0;
     }
-    h1 {
-      margin-bottom: 0.5rem;
+
+    @keyframes cardIn {
+      0% {
+        opacity: 0;
+        transform: translateY(24px) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
-    p {
-      opacity: 0.7;
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 118, 73, 0.22);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #A7F3D0;
+      margin-bottom: 12px;
+      animation: pulseBadge 2800ms ease-out infinite;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22C55E;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+      animation: badgeDotPulse 1400ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes badgeDotPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.75); }
+      70%  { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    @keyframes pulseBadge {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-1px); }
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .icon-wrap {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      border-radius: 24px;
+      padding: 4px;
+      background: radial-gradient(circle at 0% 0%, #4ade80, #15803d);
+      box-shadow: 0 16px 35px rgba(22, 163, 74, 0.6);
+      overflow: hidden;
+    }
+
+    .icon-ring {
+      position: absolute;
+      inset: -30%;
+      border-radius: inherit;
+      background: conic-gradient(
+        from 180deg,
+        rgba(16, 185, 129, 0.3),
+        rgba(74, 222, 128, 0.1),
+        transparent,
+        transparent,
+        rgba(22, 163, 74, 0.4)
+      );
+      mix-blend-mode: screen;
+      animation: spinRing 16s linear infinite;
+      opacity: 0.9;
+    }
+
+    @keyframes spinRing {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .icon-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #020617;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.02);
+    }
+
+    .title-block h1 {
+      font-size: 1.7rem;
+      letter-spacing: 0.02em;
+      margin-bottom: 4px;
+    }
+
+    .title-block span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .title-pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(22, 101, 52, 0.55);
+      color: #bbf7d0;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .subtitle {
+      font-size: 0.94rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      margin-bottom: 16px;
+      color: #A7F3D0;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22C55E;
+    }
+
+    .status span {
+      opacity: 0.8;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .btn {
+      flex: 1;
+      min-width: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 140ms ease, box-shadow 140ms ease, background 180ms ease, border-color 180ms ease, opacity 140ms ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #22C55E, #16A34A);
+      color: #022c22;
+      box-shadow: 0 14px 30px rgba(22, 163, 74, 0.75);
+    }
+
+    .btn-primary span {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      background: radial-gradient(circle at top left, rgba(15, 118, 110, 0.35), rgba(15, 23, 42, 0.96));
+      color: var(--text-main);
+      border-color: rgba(148, 163, 184, 0.4);
+    }
+
+    .btn-icon {
+      font-size: 1.2rem;
+      opacity: 0.85;
+    }
+
+    .btn:hover {
+      transform: translateY(-1.5px) scale(1.01);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+      opacity: 1;
+    }
+
+    .btn:active {
+      transform: translateY(0) scale(0.99);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      color: rgba(226, 232, 240, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      justify-content: center;
+    }
+
+    .hint span {
+      opacity: 0.9;
+    }
+
+    .hint-key {
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      font-size: 0.7rem;
+      opacity: 0.85;
+    }
+
+    /* small glow separator */
+    .divider {
+      height: 1px;
+      width: 100%;
+      margin: 12px 0 10px;
+      background: radial-gradient(circle, rgba(148, 163, 184, 0.8), transparent 70%);
+      opacity: 0.4;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 16px;
+      }
+      .card {
+        padding: 24px 18px 20px;
+        border-radius: 20px;
+      }
+      .header {
+        align-items: flex-start;
+      }
+      .title-block h1 {
+        font-size: 1.5rem;
+      }
+      .subtitle {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Redirecting to Husta…</h1>
-    <p>If nothing happens, choose your platform:</p>
-    <p>
-      <a href="https://play.google.com/store/apps/details?id=com.arazmzerii.husta&hl=en">Download for Android</a>
-      <br />
-      <a href="https://apps.apple.com/us/app/husta/id6748364553">Download for iOS</a>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <main class="card">
+    <div class="badge">
+      <div class="badge-dot"></div>
+      <span>Redirecting to Husta…</span>
+    </div>
+
+    <section class="header">
+      <div class="icon-wrap">
+        <div class="icon-ring"></div>
+        <div class="icon-inner">
+          <!-- Make sure appicon.png is in the same folder as this HTML file -->
+          <img src="appicon.png" alt="Husta App Icon" />
+        </div>
+      </div>
+      <div class="title-block">
+        <h1>Husta App</h1>
+        <span>
+          <span class="title-pill">Smart Service</span>
+          • Available on iOS & Android
+        </span>
+      </div>
+    </section>
+
+    <p class="subtitle">
+      Get quick access to trusted home services with Husta. Tap your store below
+      or stay here to choose your platform manually.
     </p>
-  </div>
+
+    <div class="status">
+      <div class="status-dot"></div>
+      <span>Trying to open the best store for your device…</span>
+    </div>
+
+    <div class="button-row">
+      <a
+        class="btn btn-primary"
+        href="https://play.google.com/store/apps/details?id=com.arazmzerii.husta&hl=en"
+      >
+        <span>Android</span>
+        <div class="btn-icon">▶</div>
+      </a>
+      <a
+        class="btn btn-secondary"
+        href="https://apps.apple.com/us/app/husta/id6748364553"
+      >
+        <div class="btn-icon"></div>
+        <span>Download on iOS</span>
+      </a>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="hint">
+      <span>If nothing happens automatically, choose a button above.</span>
+    </p>
+  </main>
 </body>
 </html>
